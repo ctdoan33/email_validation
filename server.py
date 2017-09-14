@@ -17,7 +17,7 @@ def validate():
         flash("Email is not valid!")
         return redirect("/")
     else:
-        query = "SELECT email FROM emails WHERE email = :email"
+        query = "SELECT email_address FROM emails WHERE email_address = :email"
         data = {"email":request.form["email"]}
         if mysql.query_db(query, data) != []:
             flash("That email is already registered!")
