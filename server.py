@@ -28,4 +28,16 @@ def success():
     query = "SELECT email_address, DATE_FORMAT(created_at, '%m/%d/%y %I:%i %p') AS date FROM emails"
     emails = mysql.query_db(query)
     return render_template("success.html", all_emails=emails)
+@app.route("/delete", methods=["POST"])
+def delete():
+    if len(request.form["email"]) < 1:
+        flash("Email must not be blank!")
+    elif not EMAIL_REGEX.match(request.form["email"]):
+        flash("Email is not valid!")
+    else:
+        session["newemail"] = request.form["email"]
+        query = "DELETE FROM emails WHERE email_address = :email"
+        data = {"email": request.form["email"]}
+        mysql.query_db(query, data)
+    return redirect("/success")
 app.run(debug=True)
