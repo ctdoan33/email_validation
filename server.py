@@ -12,17 +12,23 @@ def index():
 def validate():
     if len(request.form["email"]) < 1:
         flash("Email must not be blank!")
+        return redirect("/")
     elif not EMAIL_REGEX.match(request.form["email"]):
         flash("Email is not valid!")
+        return redirect("/")
     else:
-        session["newemail"] = request.form["email"]
-        query = "INSERT INTO emails (email_address, created_at, updated_at) VALUES (:email, NOW(), NOW())"
-        data = {
-            "email" : request.form["email"]
-        }
-        mysql.query_db(query, data)
-        return redirect("/success")
-    return redirect("/")
+        query = "SELECT email FROM emails WHERE email = :email"
+        data = {"email":request.form["email"]}
+        if mysql.query_db(query, data) != []:
+            flash("That email is already registered!")
+            return redirect("/")
+    session["newemail"] = request.form["email"]
+    query = "INSERT INTO emails (email_address, created_at, updated_at) VALUES (:email, NOW(), NOW())"
+    data = {
+        "email" : request.form["email"]
+    }
+    mysql.query_db(query, data)
+    return redirect("/success")
 @app.route("/success")
 def success():
     query = "SELECT email_address, DATE_FORMAT(created_at, '%m/%d/%y %I:%i %p') AS date FROM emails"
