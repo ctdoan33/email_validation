@@ -4,27 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Success Page</title>
-    <style>
-        div{
-            background-color: green;
-            font-size: 1.5em;
-            display: inline-block;
-            border: 1pt solid black;
-            padding: .5em;
-        }
-        p{
-            background-color: red;
-            color: white;
-            font-size: 1.5em;
-            display: inline-block;
-            border: 1pt solid black;
-            padding: .5em;
-        }
-    </style>
 </head>
 <body>
-    <div>The email address you entered {{session["newemail"]}} is a VALID email address! Thank you!</div>
+    <div class="valid">The email address you entered ({{session["newemail"]}}) is a VALID email address! Thank you!</div>
     <h1>Email Addresses Entered:</h1>
     <table>
         <tbody>
@@ -36,17 +20,20 @@
             {% endfor %}
         </tbody>
     </table>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <p>{{message}}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
     <h1>Delete An Email Address:</h1>
-    <form action="/delete" method="post">
-        Email: <input type="text" name="email">
-        <input type="submit" value="Submit">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+        <div class="invalid">{{message}}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <p>Email: <input form="delete" type="text" name="email"></p>
+    <form action="/" method="get">
+        <input class="submit" type="submit" value="Go Back">
+    </form>
+    <form id="delete" action="/delete" method="post">
+        <input class="submit" type="submit" value="Submit">
     </form>
 </body>
 </html>
